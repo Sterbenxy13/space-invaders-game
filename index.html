@@ -477,6 +477,277 @@
             text-shadow: 0 0 10px #00ff00;
         }
 
+        /* Power-up styles */
+        .power-up {
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            animation: powerUpFloat 1s ease-in-out infinite, powerUpGlow 0.5s ease-in-out infinite alternate;
+            z-index: 50;
+        }
+
+        .power-up-rapid-fire {
+            background: radial-gradient(circle, #ffff00 0%, #ff6600 70%, #ff0000 100%);
+            box-shadow: 0 0 15px #ffff00, 0 0 30px #ff6600;
+        }
+
+        .power-up-shield {
+            background: radial-gradient(circle, #00ffff 0%, #0088ff 70%, #0044aa 100%);
+            box-shadow: 0 0 15px #00ffff, 0 0 30px #0088ff;
+        }
+
+        .power-up-charged-shot {
+            background: radial-gradient(circle, #ff00ff 0%, #8800ff 70%, #440088 100%);
+            box-shadow: 0 0 15px #ff00ff, 0 0 30px #8800ff;
+        }
+
+        .power-up-invincibility {
+            background: radial-gradient(circle, #ffffff 0%, #ffff00 50%, #ff8800 100%);
+            box-shadow: 0 0 20px #ffffff, 0 0 40px #ffff00;
+        }
+
+        @keyframes powerUpFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        @keyframes powerUpGlow {
+            0% { filter: brightness(1); }
+            100% { filter: brightness(1.5); }
+        }
+
+        /* Shield effect around player */
+        .player-shield {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border: 3px solid #00ffff;
+            border-radius: 50%;
+            box-shadow: 0 0 15px #00ffff, inset 0 0 10px rgba(0, 255, 255, 0.3);
+            animation: shieldPulse 0.5s ease-in-out infinite alternate;
+            pointer-events: none;
+        }
+
+        @keyframes shieldPulse {
+            0% { opacity: 0.5; transform: scale(0.95); }
+            100% { opacity: 1; transform: scale(1.05); }
+        }
+
+        /* Invincibility effect */
+        .player-invincible {
+            animation: invincibleFlash 0.2s ease-in-out infinite alternate !important;
+        }
+
+        @keyframes invincibleFlash {
+            0% { filter: brightness(1) hue-rotate(0deg); }
+            100% { filter: brightness(2) hue-rotate(180deg); }
+        }
+
+        /* Charged shot charging indicator */
+        .charge-indicator {
+            position: absolute;
+            width: 30px;
+            height: 5px;
+            background: #333;
+            border: 1px solid #ff00ff;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .charge-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(to right, #ff00ff, #00ffff);
+            transition: width 0.1s;
+        }
+
+        /* Charged projectile */
+        .charged-projectile {
+            position: absolute;
+            width: 15px;
+            height: 30px;
+            background: linear-gradient(to top, #ff00ff, #00ffff, #ffffff);
+            box-shadow: 0 0 20px #ff00ff, 0 0 40px #00ffff;
+            border-radius: 5px;
+        }
+
+        /* Cooldown indicator */
+        #cooldownIndicator {
+            position: absolute;
+            bottom: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 8px;
+            background: #333;
+            border: 1px solid #00ff00;
+            border-radius: 4px;
+            overflow: hidden;
+            z-index: 100;
+        }
+
+        #cooldownBar {
+            height: 100%;
+            width: 100%;
+            background: #00ff00;
+            transition: width 0.05s;
+        }
+
+        /* Power-up status display */
+        #powerUpStatus {
+            position: absolute;
+            top: 10px;
+            right: 80px;
+            color: #00ff00;
+            font-size: 12px;
+            z-index: 100;
+            text-shadow: 0 0 10px #00ff00;
+        }
+
+        .power-up-icon {
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            margin-right: 5px;
+            vertical-align: middle;
+        }
+
+        /* Hit effect */
+        .hit-effect {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 255, 0, 0.8) 0%, rgba(255, 100, 0, 0.5) 50%, transparent 70%);
+            animation: hitExplosion 0.3s ease-out forwards;
+            pointer-events: none;
+            z-index: 60;
+        }
+
+        @keyframes hitExplosion {
+            0% { transform: scale(0.5); opacity: 1; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+
+        /* Miss effect */
+        .miss-effect {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ff0000;
+            border-radius: 50%;
+            animation: missRipple 0.4s ease-out forwards;
+            pointer-events: none;
+            z-index: 60;
+        }
+
+        @keyframes missRipple {
+            0% { transform: scale(0.5); opacity: 1; border-width: 3px; }
+            100% { transform: scale(2); opacity: 0; border-width: 1px; }
+        }
+
+        /* Enemy damage states */
+        .enemy-damaged {
+            position: relative;
+        }
+
+        .enemy-damaged::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: none;
+        }
+
+        .damage-sparks {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background: #ffff00;
+            border-radius: 50%;
+            animation: sparkle 0.3s ease-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes sparkle {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.5); }
+            100% { opacity: 0; transform: scale(0.5) translateY(-10px); }
+        }
+
+        .damage-smoke {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background: radial-gradient(circle, rgba(100, 100, 100, 0.8) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: smokeRise 1s ease-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes smokeRise {
+            0% { opacity: 0.8; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-20px) scale(2); }
+        }
+
+        /* Boss telegraph attack warning */
+        .boss-telegraph {
+            position: absolute;
+            background: linear-gradient(to bottom, rgba(255, 0, 0, 0.3), transparent);
+            animation: telegraphFlash 0.3s ease-in-out infinite alternate;
+            pointer-events: none;
+            z-index: 40;
+        }
+
+        @keyframes telegraphFlash {
+            0% { opacity: 0.3; }
+            100% { opacity: 0.7; }
+        }
+
+        /* Boss charging indicator */
+        .boss-charging {
+            animation: bossCharge 0.2s ease-in-out infinite alternate !important;
+        }
+
+        @keyframes bossCharge {
+            0% { filter: brightness(1); box-shadow: 0 0 20px #ff00ff, 0 0 40px #8800ff; }
+            100% { filter: brightness(2); box-shadow: 0 0 40px #ff0000, 0 0 80px #ff6600; }
+        }
+
+        /* Enemy projectile types */
+        .enemy-projectile-burst {
+            width: 6px;
+            height: 12px;
+            background: #ff6600;
+            box-shadow: 0 0 8px #ff6600;
+            border-radius: 2px;
+        }
+
+        .enemy-projectile-aoe {
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(circle, #ff0000 0%, #ff6600 50%, transparent 70%);
+            border-radius: 50%;
+            box-shadow: 0 0 15px #ff0000;
+        }
+
+        /* Area of effect explosion */
+        .aoe-explosion {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 100, 0, 0.8) 0%, rgba(255, 0, 0, 0.5) 50%, transparent 70%);
+            animation: aoeExpand 0.5s ease-out forwards;
+            pointer-events: none;
+            z-index: 55;
+        }
+
+        @keyframes aoeExpand {
+            0% { transform: scale(0.2); opacity: 1; }
+            100% { transform: scale(1); opacity: 0; }
+        }
+
         /* Glowing stars background */
         .star {
             position: absolute;
@@ -621,6 +892,92 @@
             oscillator.stop(audioContext.currentTime + 0.2);
         }
 
+        // Play power-up collect sound
+        function playPowerUpSound() {
+            if (!audioContext || isMuted) return;
+            
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(400, audioContext.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(800, audioContext.currentTime + 0.1);
+            oscillator.frequency.exponentialRampToValueAtTime(1200, audioContext.currentTime + 0.2);
+            
+            gainNode.gain.setValueAtTime(0.15, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+            
+            oscillator.start();
+            oscillator.stop(audioContext.currentTime + 0.2);
+        }
+
+        // Play charged shot sound
+        function playChargedShotSound() {
+            if (!audioContext || isMuted) return;
+            
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.type = 'square';
+            oscillator.frequency.setValueAtTime(1200, audioContext.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(300, audioContext.currentTime + 0.3);
+            
+            gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+            
+            oscillator.start();
+            oscillator.stop(audioContext.currentTime + 0.3);
+        }
+
+        // Play boss telegraph warning sound
+        function playTelegraphSound() {
+            if (!audioContext || isMuted) return;
+            
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.type = 'triangle';
+            oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.15);
+            oscillator.frequency.exponentialRampToValueAtTime(200, audioContext.currentTime + 0.3);
+            
+            gainNode.gain.setValueAtTime(0.12, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+            
+            oscillator.start();
+            oscillator.stop(audioContext.currentTime + 0.3);
+        }
+
+        // Play miss sound effect
+        function playMissSound() {
+            if (!audioContext || isMuted) return;
+            
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(300, audioContext.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(100, audioContext.currentTime + 0.15);
+            
+            gainNode.gain.setValueAtTime(0.08, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
+            
+            oscillator.start();
+            oscillator.stop(audioContext.currentTime + 0.15);
+        }
+
         // Start background music
         function startBackgroundMusic() {
             if (!audioContext || isMuted) return;
@@ -727,9 +1084,28 @@
         const MAX_ENEMIES_PER_WAVE = 10;
         const SPEED_INCREASE_PER_WAVE = 0.3;
         const ENEMY_HORIZONTAL_MARGIN = 100;
-        const BOSS_ATTACK_PATTERNS = 3;
+        const BOSS_ATTACK_PATTERNS = 5; // Increased for new patterns
         const TRIPLE_SHOT_SPACING = 30;
         const BARRAGE_SHOT_SPACING = 25;
+
+        // Combat mechanics constants
+        const SHOOT_COOLDOWN = 15; // frames between shots (normal mode)
+        const RAPID_FIRE_COOLDOWN = 5; // frames between shots (rapid fire mode)
+        const RAPID_FIRE_DURATION = 300; // frames of rapid fire
+        const SHIELD_DURATION = 500; // frames of shield protection
+        const SHIELD_HITS = 3; // number of hits shield can absorb
+        const INVINCIBILITY_DURATION = 180; // frames of invincibility
+        const CHARGE_TIME = 60; // frames to fully charge
+        const CHARGED_SHOT_DAMAGE = 5; // damage multiplier for charged shot
+        const POWER_UP_SPAWN_CHANCE = 0.15; // 15% chance to spawn power-up on enemy kill
+        const POWER_UP_SPEED = 2; // falling speed of power-ups
+        const BOSS_TELEGRAPH_DURATION = 60; // frames of warning before attack
+
+        // Enemy combat constants
+        const ENEMY_SHOOT_CHANCE_BASE = 0.002; // base chance per frame to shoot
+        const BURST_FIRE_COUNT = 3; // shots in a burst
+        const BURST_FIRE_DELAY = 10; // frames between burst shots
+        const AOE_EXPLOSION_RADIUS = 60; // radius of area damage
 
         // Game state
         let gameState = {
@@ -744,6 +1120,8 @@
             projectiles: [],
             enemyProjectiles: [],
             obstacles: [],
+            powerUps: [],
+            hitEffects: [],
             score: 0,
             lives: 3,
             gameOver: false,
@@ -752,22 +1130,46 @@
             maxWaves: 5,
             inWaveTransition: false,
             boss: null,
-            bossPhase: false
+            bossPhase: false,
+            // Combat mechanics state
+            shootCooldown: 0,
+            rapidFireActive: false,
+            rapidFireTimer: 0,
+            shieldActive: false,
+            shieldTimer: 0,
+            shieldHits: 0,
+            invincibilityActive: false,
+            invincibilityTimer: 0,
+            chargedShotReady: false,
+            chargeTimer: 0,
+            isCharging: false,
+            bossTelegraph: null
         };
 
         // Keyboard input
         const keys = {};
+        let spaceHoldTimer = 0;
+
         window.addEventListener('keydown', (e) => {
             keys[e.key] = true;
             initAudio(); // Initialize audio on first user interaction
             if (e.key === ' ') {
                 e.preventDefault();
-                shootProjectile();
+                if (gameState.chargedShotReady) {
+                    startCharging();
+                } else {
+                    shootProjectile();
+                }
             }
         });
 
         window.addEventListener('keyup', (e) => {
             keys[e.key] = false;
+            if (e.key === ' ') {
+                if (gameState.isCharging) {
+                    stopCharging();
+                }
+            }
         });
 
         // Initialize game
@@ -784,6 +1186,8 @@
                 projectiles: [],
                 enemyProjectiles: [],
                 obstacles: [],
+                powerUps: [],
+                hitEffects: [],
                 score: 0,
                 lives: 3,
                 gameOver: false,
@@ -792,7 +1196,20 @@
                 maxWaves: 5,
                 inWaveTransition: false,
                 boss: null,
-                bossPhase: false
+                bossPhase: false,
+                // Combat mechanics state
+                shootCooldown: 0,
+                rapidFireActive: false,
+                rapidFireTimer: 0,
+                shieldActive: false,
+                shieldTimer: 0,
+                shieldHits: 0,
+                invincibilityActive: false,
+                invincibilityTimer: 0,
+                chargedShotReady: false,
+                chargeTimer: 0,
+                isCharging: false,
+                bossTelegraph: null
             };
 
             gameOverScreen.classList.remove('show');
@@ -806,6 +1223,10 @@
                     <div id="bossHealthBar"></div>
                 </div>
                 <div id="bossLabel">BOSS</div>
+                <div id="powerUpStatus"></div>
+                <div id="cooldownIndicator">
+                    <div id="cooldownBar"></div>
+                </div>
                 <button id="muteBtn">${isMuted ? '🔇 Muted' : '🔊 Sound'}</button>
                 <div id="waveTransition">
                     <div id="waveTransitionText">Wave 1 Complete!</div>
@@ -814,6 +1235,7 @@
                 <div id="instructions">
                     <div>← → Arrow Keys to Move</div>
                     <div>SPACE to Shoot</div>
+                    <div>Hold SPACE to Charge Shot</div>
                 </div>
                 <div id="gameOverScreen">
                     <div id="gameOverText">GAME OVER</div>
@@ -864,12 +1286,46 @@
             const spacing = (GAME_WIDTH - ENEMY_HORIZONTAL_MARGIN) / enemyCount;
             
             for (let i = 0; i < enemyCount; i++) {
+                // Determine enemy type (1-3) with different combat characteristics
+                const enemyType = (i % ENEMY_TYPES_COUNT) + 1;
+                
+                // Different enemy types have different stats
+                let health, shootChance, attackType;
+                switch (enemyType) {
+                    case 1: // Red aggressive - single shots
+                        health = 1;
+                        shootChance = ENEMY_SHOOT_CHANCE_BASE;
+                        attackType = 'single';
+                        break;
+                    case 2: // Purple scout - burst fire
+                        health = 2;
+                        shootChance = ENEMY_SHOOT_CHANCE_BASE * 0.8;
+                        attackType = 'burst';
+                        break;
+                    case 3: // Orange heavy - AOE attacks
+                        health = 3;
+                        shootChance = ENEMY_SHOOT_CHANCE_BASE * 0.5;
+                        attackType = 'aoe';
+                        break;
+                    default:
+                        health = 1;
+                        shootChance = ENEMY_SHOOT_CHANCE_BASE;
+                        attackType = 'single';
+                }
+                
                 gameState.enemies.push({
                     x: 50 + i * spacing,
                     y: 40,
                     width: ENEMY_WIDTH,
                     height: ENEMY_HEIGHT,
-                    speed: ENEMY_SPEED * speedMultiplier
+                    speed: ENEMY_SPEED * speedMultiplier,
+                    type: enemyType,
+                    health: health,
+                    maxHealth: health,
+                    shootChance: shootChance * (1 + wave * 0.2), // Increase with wave
+                    attackType: attackType,
+                    burstCount: 0, // for burst fire tracking
+                    burstTimer: 0
                 });
             }
         }
@@ -889,6 +1345,123 @@
             }
         }
 
+        // Spawn a random power-up at a position
+        function spawnPowerUp(x, y) {
+            if (Math.random() > POWER_UP_SPAWN_CHANCE) return;
+            
+            const powerUpTypes = ['rapid-fire', 'shield', 'charged-shot', 'invincibility'];
+            const type = powerUpTypes[Math.floor(Math.random() * powerUpTypes.length)];
+            
+            gameState.powerUps.push({
+                x: x,
+                y: y,
+                width: 25,
+                height: 25,
+                type: type,
+                speed: POWER_UP_SPEED
+            });
+        }
+
+        // Collect power-up and apply effect
+        function collectPowerUp(powerUp) {
+            playPowerUpSound();
+            
+            switch (powerUp.type) {
+                case 'rapid-fire':
+                    gameState.rapidFireActive = true;
+                    gameState.rapidFireTimer = RAPID_FIRE_DURATION;
+                    break;
+                case 'shield':
+                    gameState.shieldActive = true;
+                    gameState.shieldTimer = SHIELD_DURATION;
+                    gameState.shieldHits = SHIELD_HITS;
+                    break;
+                case 'charged-shot':
+                    gameState.chargedShotReady = true;
+                    break;
+                case 'invincibility':
+                    gameState.invincibilityActive = true;
+                    gameState.invincibilityTimer = INVINCIBILITY_DURATION;
+                    break;
+            }
+        }
+
+        // Update power-ups (falling and collection)
+        function updatePowerUps() {
+            for (let i = gameState.powerUps.length - 1; i >= 0; i--) {
+                const powerUp = gameState.powerUps[i];
+                powerUp.y += powerUp.speed;
+                
+                // Check if collected by player
+                if (isColliding(powerUp, gameState.player)) {
+                    collectPowerUp(powerUp);
+                    gameState.powerUps.splice(i, 1);
+                    continue;
+                }
+                
+                // Remove if off screen
+                if (powerUp.y > GAME_HEIGHT) {
+                    gameState.powerUps.splice(i, 1);
+                }
+            }
+        }
+
+        // Update combat mechanics timers
+        function updateCombatMechanics() {
+            // Update shoot cooldown
+            if (gameState.shootCooldown > 0) {
+                gameState.shootCooldown--;
+            }
+            
+            // Update rapid fire timer
+            if (gameState.rapidFireActive) {
+                gameState.rapidFireTimer--;
+                if (gameState.rapidFireTimer <= 0) {
+                    gameState.rapidFireActive = false;
+                }
+            }
+            
+            // Update shield timer
+            if (gameState.shieldActive) {
+                gameState.shieldTimer--;
+                if (gameState.shieldTimer <= 0 || gameState.shieldHits <= 0) {
+                    gameState.shieldActive = false;
+                }
+            }
+            
+            // Update invincibility timer
+            if (gameState.invincibilityActive) {
+                gameState.invincibilityTimer--;
+                if (gameState.invincibilityTimer <= 0) {
+                    gameState.invincibilityActive = false;
+                }
+            }
+            
+            // Update charging
+            if (gameState.isCharging && gameState.chargedShotReady) {
+                gameState.chargeTimer++;
+                if (gameState.chargeTimer >= CHARGE_TIME) {
+                    gameState.chargeTimer = CHARGE_TIME;
+                }
+            }
+            
+            // Update hit effects
+            gameState.hitEffects = gameState.hitEffects.filter(effect => {
+                effect.timer--;
+                return effect.timer > 0;
+            });
+        }
+
+        // Create a hit effect at position
+        function createHitEffect(x, y, isHit) {
+            gameState.hitEffects.push({
+                x: x,
+                y: y,
+                type: isHit ? 'hit' : 'miss',
+                timer: 20
+            });
+        }
+
         function createBoss() {
             gameState.boss = {
                 x: GAME_WIDTH / 2 - 60,
@@ -900,7 +1473,12 @@
                 health: 50,
                 direction: 1,
                 shootCooldown: 0,
-                attackPattern: 0
+                attackPattern: 0,
+                // Telegraphed attack properties
+                isTelegraphing: false,
+                telegraphTimer: 0,
+                telegraphType: null,
+                isCharging: false
             };
             gameState.bossPhase = true;
             bossHealthContainer.classList.add('show');
@@ -943,6 +1521,21 @@
             
             const boss = gameState.boss;
             
+            // Handle telegraphed attack phase
+            if (boss.isTelegraphing) {
+                boss.telegraphTimer--;
+                boss.isCharging = true;
+                
+                if (boss.telegraphTimer <= 0) {
+                    // Execute the telegraphed attack
+                    executeTelegraphedAttack(boss.telegraphType);
+                    boss.isTelegraphing = false;
+                    boss.isCharging = false;
+                    gameState.bossTelegraph = null;
+                }
+                return; // Don't move while telegraphing
+            }
+            
             // Move boss left and right
             boss.x += boss.speed * boss.direction;
             
@@ -953,7 +1546,7 @@
             // Boss shooting with cooldown
             boss.shootCooldown--;
             if (boss.shootCooldown <= 0) {
-                // Choose attack pattern
+                // Choose attack pattern (5 patterns now)
                 boss.attackPattern = (boss.attackPattern + 1) % BOSS_ATTACK_PATTERNS;
                 
                 if (boss.attackPattern === 0) {
@@ -963,7 +1556,8 @@
                         y: boss.y + boss.height,
                         width: 8,
                         height: 20,
-                        speed: 5
+                        speed: 5,
+                        type: 'normal'
                     });
                     boss.shootCooldown = 60;
                 } else if (boss.attackPattern === 1) {
@@ -974,11 +1568,12 @@
                             y: boss.y + boss.height,
                             width: 8,
                             height: 20,
-                            speed: 4
+                            speed: 4,
+                            type: 'normal'
                         });
                     }
                     boss.shootCooldown = 90;
-                } else {
+                } else if (boss.attackPattern === 2) {
                     // Five shot barrage
                     for (let i = -2; i <= 2; i++) {
                         gameState.enemyProjectiles.push({
@@ -986,10 +1581,19 @@
                             y: boss.y + boss.height,
                             width: 8,
                             height: 20,
-                            speed: 3
+                            speed: 3,
+                            type: 'normal'
                         });
                     }
                     boss.shootCooldown = 120;
+                } else if (boss.attackPattern === 3) {
+                    // Telegraphed laser beam attack
+                    startTelegraphedAttack('laser');
+                    boss.shootCooldown = 180;
+                } else if (boss.attackPattern === 4) {
+                    // Telegraphed area bombardment
+                    startTelegraphedAttack('bombardment');
+                    boss.shootCooldown = 200;
                 }
             }
             
@@ -998,9 +1602,140 @@
             bossHealthBar.style.width = healthPercent + '%';
         }
 
+        // Start a telegraphed attack with visual warning
+        function startTelegraphedAttack(attackType) {
+            const boss = gameState.boss;
+            if (!boss) return;
+            
+            boss.isTelegraphing = true;
+            boss.telegraphTimer = BOSS_TELEGRAPH_DURATION;
+            boss.telegraphType = attackType;
+            
+            playTelegraphSound();
+            
+            // Create telegraph visual based on attack type
+            if (attackType === 'laser') {
+                // Vertical laser warning zone
+                gameState.bossTelegraph = {
+                    type: 'laser',
+                    x: boss.x + boss.width / 2 - 30,
+                    y: boss.y + boss.height,
+                    width: 60,
+                    height: GAME_HEIGHT - boss.y - boss.height
+                };
+            } else if (attackType === 'bombardment') {
+                // Wide area warning
+                gameState.bossTelegraph = {
+                    type: 'bombardment',
+                    x: 100,
+                    y: GAME_HEIGHT - 150,
+                    width: GAME_WIDTH - 200,
+                    height: 100
+                };
+            }
+        }
+
+        // Execute the telegraphed attack
+        function executeTelegraphedAttack(attackType) {
+            const boss = gameState.boss;
+            if (!boss) return;
+            
+            if (attackType === 'laser') {
+                // Create a powerful vertical laser beam
+                for (let i = 0; i < 8; i++) {
+                    gameState.enemyProjectiles.push({
+                        x: boss.x + boss.width / 2 - 4 + (Math.random() - 0.5) * 40,
+                        y: boss.y + boss.height + i * 50,
+                        width: 12,
+                        height: 30,
+                        speed: 8,
+                        type: 'normal'
+                    });
+                }
+            } else if (attackType === 'bombardment') {
+                // Create multiple projectiles across the screen
+                for (let i = 0; i < 10; i++) {
+                    gameState.enemyProjectiles.push({
+                        x: 100 + (GAME_WIDTH - 200) * (i / 9),
+                        y: boss.y + boss.height,
+                        width: 10,
+                        height: 25,
+                        speed: 6,
+                        type: 'normal'
+                    });
+                }
+            }
+        }
+
+        // Update enemies with attack patterns
+        function updateEnemyAttacks() {
+            for (const enemy of gameState.enemies) {
+                // Handle burst fire continuation
+                if (enemy.burstCount > 0) {
+                    enemy.burstTimer--;
+                    if (enemy.burstTimer <= 0) {
+                        // Fire next burst shot
+                        gameState.enemyProjectiles.push({
+                            x: enemy.x + enemy.width / 2 - 3,
+                            y: enemy.y + enemy.height,
+                            width: 6,
+                            height: 12,
+                            speed: 4,
+                            type: 'burst'
+                        });
+                        enemy.burstCount--;
+                        enemy.burstTimer = BURST_FIRE_DELAY;
+                    }
+                    continue;
+                }
+                
+                // Check if enemy should shoot
+                if (Math.random() < enemy.shootChance) {
+                    switch (enemy.attackType) {
+                        case 'single':
+                            gameState.enemyProjectiles.push({
+                                x: enemy.x + enemy.width / 2 - 4,
+                                y: enemy.y + enemy.height,
+                                width: 8,
+                                height: 15,
+                                speed: 3,
+                                type: 'normal'
+                            });
+                            break;
+                        case 'burst':
+                            // Start burst fire sequence
+                            enemy.burstCount = BURST_FIRE_COUNT;
+                            enemy.burstTimer = 0;
+                            break;
+                        case 'aoe':
+                            // Fire AOE projectile
+                            gameState.enemyProjectiles.push({
+                                x: enemy.x + enemy.width / 2 - 10,
+                                y: enemy.y + enemy.height,
+                                width: 20,
+                                height: 20,
+                                speed: 2,
+                                type: 'aoe',
+                                exploded: false
+                            });
+                            break;
+                    }
+                }
+            }
+        }
+
         function updateEnemyProjectiles() {
             gameState.enemyProjectiles = gameState.enemyProjectiles.filter(proj => {
                 proj.y += proj.speed;
+                
+                // Handle AOE projectile explosion at certain height
+                if (proj.type === 'aoe' && !proj.exploded && proj.y > GAME_HEIGHT - 200) {
+                    proj.exploded = true;
+                    // Create AOE damage zone
+                    createAOEExplosion(proj.x + proj.width / 2, proj.y + proj.height / 2);
+                    return false; // Remove the projectile
+                }
+                
                 return proj.y < GAME_HEIGHT;
             });
             
@@ -1008,8 +1743,30 @@
             for (let i = gameState.enemyProjectiles.length - 1; i >= 0; i--) {
                 if (isColliding(gameState.enemyProjectiles[i], gameState.player)) {
                     gameState.enemyProjectiles.splice(i, 1);
+                    
+                    // Check for invincibility first
+                    if (gameState.invincibilityActive) {
+                        createHitEffect(gameState.player.x + gameState.player.width / 2, 
+                                       gameState.player.y, false);
+                        continue;
+                    }
+                    
+                    // Check for shield
+                    if (gameState.shieldActive) {
+                        gameState.shieldHits--;
+                        playCollisionSound();
+                        createHitEffect(gameState.player.x + gameState.player.width / 2, 
+                                       gameState.player.y, true);
+                        if (gameState.shieldHits <= 0) {
+                            gameState.shieldActive = false;
+                        }
+                        continue;
+                    }
+                    
                     gameState.lives--;
                     playCollisionSound();
+                    createHitEffect(gameState.player.x + gameState.player.width / 2, 
+                                   gameState.player.y, true);
                     
                     if (gameState.lives <= 0) {
                         gameState.gameOver = true;
@@ -1021,6 +1778,8 @@
             for (let i = gameState.enemyProjectiles.length - 1; i >= 0; i--) {
                 for (let j = gameState.obstacles.length - 1; j >= 0; j--) {
                     if (isColliding(gameState.enemyProjectiles[i], gameState.obstacles[j])) {
+                        createHitEffect(gameState.enemyProjectiles[i].x, 
+                                       gameState.enemyProjectiles[i].y, true);
                         gameState.enemyProjectiles.splice(i, 1);
                         gameState.obstacles[j].health--;
                         if (gameState.obstacles[j].health <= 0) {
@@ -1032,16 +1791,98 @@
             }
         }
 
+        // Create AOE explosion that can damage player
+        function createAOEExplosion(x, y) {
+            // Add visual effect
+            gameState.hitEffects.push({
+                x: x,
+                y: y,
+                type: 'aoe',
+                timer: 30,
+                radius: AOE_EXPLOSION_RADIUS
+            });
+            
+            playCollisionSound();
+            
+            // Check if player is in AOE range
+            const playerCenterX = gameState.player.x + gameState.player.width / 2;
+            const playerCenterY = gameState.player.y + gameState.player.height / 2;
+            const distance = Math.sqrt(Math.pow(playerCenterX - x, 2) + Math.pow(playerCenterY - y, 2));
+            
+            if (distance < AOE_EXPLOSION_RADIUS) {
+                // Player hit by AOE
+                if (!gameState.invincibilityActive) {
+                    if (gameState.shieldActive) {
+                        gameState.shieldHits--;
+                        if (gameState.shieldHits <= 0) {
+                            gameState.shieldActive = false;
+                        }
+                    } else {
+                        gameState.lives--;
+                        if (gameState.lives <= 0) {
+                            gameState.gameOver = true;
+                        }
+                    }
+                }
+            }
+        }
+
         function shootProjectile() {
-            if (!gameState.gameOver) {
+            if (gameState.gameOver) return;
+            
+            // Check cooldown
+            const cooldown = gameState.rapidFireActive ? RAPID_FIRE_COOLDOWN : SHOOT_COOLDOWN;
+            if (gameState.shootCooldown > 0) return;
+            
+            // Check if firing charged shot
+            if (gameState.chargedShotReady && gameState.chargeTimer >= CHARGE_TIME) {
+                // Fire charged shot
+                playChargedShotSound();
+                gameState.projectiles.push({
+                    x: gameState.player.x + gameState.player.width / 2 - 7.5,
+                    y: gameState.player.y,
+                    width: 15,
+                    height: 30,
+                    speed: PROJECTILE_SPEED * 1.5,
+                    isCharged: true,
+                    damage: CHARGED_SHOT_DAMAGE
+                });
+                gameState.chargedShotReady = false;
+                gameState.chargeTimer = 0;
+                gameState.isCharging = false;
+            } else {
+                // Fire normal shot
                 playShootSound();
                 gameState.projectiles.push({
                     x: gameState.player.x + gameState.player.width / 2 - 2.5,
                     y: gameState.player.y,
                     width: 5,
                     height: 15,
-                    speed: PROJECTILE_SPEED
+                    speed: PROJECTILE_SPEED,
+                    isCharged: false,
+                    damage: 1
                 });
+            }
+            
+            gameState.shootCooldown = cooldown;
+        }
+
+        // Handle charging mechanic
+        function startCharging() {
+            if (gameState.chargedShotReady && !gameState.isCharging) {
+                gameState.isCharging = true;
+                gameState.chargeTimer = 0;
+            }
+        }
+
+        function stopCharging() {
+            if (gameState.isCharging) {
+                // Fire if charged enough
+                if (gameState.chargeTimer >= CHARGE_TIME * 0.5) {
+                    shootProjectile();
+                }
+                gameState.isCharging = false;
+                gameState.chargeTimer = 0;
             }
         }
 
@@ -1080,31 +1921,43 @@
             }
         }
 
-        function updateProjectiles() {
-            gameState.projectiles = gameState.projectiles.filter(proj => {
-                proj.y -= proj.speed;
-                return proj.y > 0;
-            });
-        }
-
         function checkCollisions() {
             // Check projectile vs enemies
             for (let i = gameState.projectiles.length - 1; i >= 0; i--) {
+                let projectileHit = false;
                 for (let j = gameState.enemies.length - 1; j >= 0; j--) {
                     if (isColliding(gameState.projectiles[i], gameState.enemies[j])) {
-                        gameState.projectiles.splice(i, 1);
-                        gameState.enemies.splice(j, 1);
-                        gameState.score += 100;
+                        const damage = gameState.projectiles[i].damage || 1;
+                        gameState.enemies[j].health -= damage;
+                        
+                        createHitEffect(gameState.enemies[j].x + gameState.enemies[j].width / 2,
+                                       gameState.enemies[j].y + gameState.enemies[j].height / 2, true);
                         playCollisionSound();
+                        
+                        if (gameState.enemies[j].health <= 0) {
+                            // Enemy destroyed - spawn power-up chance
+                            spawnPowerUp(gameState.enemies[j].x + gameState.enemies[j].width / 2,
+                                        gameState.enemies[j].y + gameState.enemies[j].height / 2);
+                            gameState.enemies.splice(j, 1);
+                            gameState.score += 100;
+                        } else {
+                            // Enemy damaged but not destroyed
+                            gameState.score += 10;
+                        }
+                        
+                        gameState.projectiles.splice(i, 1);
+                        projectileHit = true;
                         break;
                     }
                 }
+                if (projectileHit) continue;
             }
 
             // Check projectile vs obstacles
             for (let i = gameState.projectiles.length - 1; i >= 0; i--) {
                 for (let j = gameState.obstacles.length - 1; j >= 0; j--) {
                     if (isColliding(gameState.projectiles[i], gameState.obstacles[j])) {
+                        createHitEffect(gameState.projectiles[i].x, gameState.projectiles[i].y, true);
                         gameState.projectiles.splice(i, 1);
                         gameState.obstacles[j].health--;
                         playCollisionSound();
@@ -1120,10 +1973,13 @@
             if (gameState.boss) {
                 for (let i = gameState.projectiles.length - 1; i >= 0; i--) {
                     if (isColliding(gameState.projectiles[i], gameState.boss)) {
+                        const damage = gameState.projectiles[i].damage || 1;
                         gameState.projectiles.splice(i, 1);
-                        gameState.boss.health--;
-                        gameState.score += 10;
+                        gameState.boss.health -= damage;
+                        gameState.score += 10 * damage;
                         playCollisionSound();
+                        createHitEffect(gameState.boss.x + gameState.boss.width / 2,
+                                       gameState.boss.y + gameState.boss.height / 2, true);
                         
                         if (gameState.boss.health <= 0) {
                             gameState.score += 1000; // Bonus for defeating boss
@@ -1146,6 +2002,20 @@
             }
         }
 
+        // Track projectiles that go off-screen (misses)
+        function updateProjectiles() {
+            for (let i = gameState.projectiles.length - 1; i >= 0; i--) {
+                gameState.projectiles[i].y -= gameState.projectiles[i].speed;
+                
+                if (gameState.projectiles[i].y < 0) {
+                    // Projectile missed - create miss effect
+                    createHitEffect(gameState.projectiles[i].x, 10, false);
+                    playMissSound();
+                    gameState.projectiles.splice(i, 1);
+                }
+            }
+        }
+
         function isColliding(rect1, rect2) {
             return rect1.x < rect2.x + rect2.width &&
                    rect1.x + rect1.width > rect2.x &&
@@ -1160,29 +2030,96 @@
 
         function render() {
             // Clear game container
-            const existingElements = gameContainer.querySelectorAll('.player, .enemy, .projectile, .obstacle, .boss, .boss-projectile');
+            const existingElements = gameContainer.querySelectorAll('.player, .enemy, .projectile, .obstacle, .boss, .boss-projectile, .power-up, .hit-effect, .miss-effect, .aoe-explosion, .player-shield, .charge-indicator, .damage-sparks, .damage-smoke, .boss-telegraph, .charged-projectile, .enemy-projectile-burst, .enemy-projectile-aoe');
             existingElements.forEach(el => el.remove());
+
+            // Render boss telegraph warning
+            if (gameState.bossTelegraph) {
+                const telegraphEl = document.createElement('div');
+                telegraphEl.className = 'boss-telegraph';
+                telegraphEl.style.left = gameState.bossTelegraph.x + 'px';
+                telegraphEl.style.top = gameState.bossTelegraph.y + 'px';
+                telegraphEl.style.width = gameState.bossTelegraph.width + 'px';
+                telegraphEl.style.height = gameState.bossTelegraph.height + 'px';
+                gameContainer.appendChild(telegraphEl);
+            }
 
             // Render player
             const playerEl = document.createElement('div');
             playerEl.className = 'player';
+            if (gameState.invincibilityActive) {
+                playerEl.classList.add('player-invincible');
+            }
             playerEl.style.left = gameState.player.x + 'px';
             playerEl.style.top = gameState.player.y + 'px';
             gameContainer.appendChild(playerEl);
 
-            // Render enemies
+            // Render shield effect around player
+            if (gameState.shieldActive) {
+                const shieldEl = document.createElement('div');
+                shieldEl.className = 'player-shield';
+                shieldEl.style.left = (gameState.player.x - 10) + 'px';
+                shieldEl.style.top = (gameState.player.y - 10) + 'px';
+                gameContainer.appendChild(shieldEl);
+            }
+
+            // Render charge indicator above player if charging
+            if (gameState.isCharging && gameState.chargedShotReady) {
+                const chargeContainer = document.createElement('div');
+                chargeContainer.className = 'charge-indicator';
+                chargeContainer.style.left = (gameState.player.x + gameState.player.width / 2 - 15) + 'px';
+                chargeContainer.style.top = (gameState.player.y - 15) + 'px';
+                
+                const chargeBar = document.createElement('div');
+                chargeBar.className = 'charge-bar';
+                chargeBar.style.width = (gameState.chargeTimer / CHARGE_TIME * 100) + '%';
+                
+                chargeContainer.appendChild(chargeBar);
+                gameContainer.appendChild(chargeContainer);
+            }
+
+            // Render enemies with damage states
             for (let enemy of gameState.enemies) {
                 const enemyEl = document.createElement('div');
                 enemyEl.className = `enemy enemy-type-${enemy.type || 1}`;
                 enemyEl.style.left = enemy.x + 'px';
                 enemyEl.style.top = enemy.y + 'px';
+                
+                // Add damage visual effects based on health
+                const healthPercent = enemy.health / enemy.maxHealth;
+                if (healthPercent < 1 && healthPercent > 0) {
+                    enemyEl.classList.add('enemy-damaged');
+                    
+                    // Add sparks for damaged enemies
+                    if (healthPercent < 0.7) {
+                        const spark = document.createElement('div');
+                        spark.className = 'damage-sparks';
+                        spark.style.left = (enemy.x + Math.random() * enemy.width) + 'px';
+                        spark.style.top = (enemy.y + Math.random() * enemy.height) + 'px';
+                        gameContainer.appendChild(spark);
+                    }
+                    
+                    // Add smoke for heavily damaged enemies
+                    if (healthPercent < 0.4) {
+                        const smoke = document.createElement('div');
+                        smoke.className = 'damage-smoke';
+                        smoke.style.left = (enemy.x + enemy.width / 2 - 7) + 'px';
+                        smoke.style.top = (enemy.y - 5) + 'px';
+                        gameContainer.appendChild(smoke);
+                    }
+                }
+                
                 gameContainer.appendChild(enemyEl);
             }
 
-            // Render projectiles
+            // Render projectiles (normal and charged)
             for (let projectile of gameState.projectiles) {
                 const projEl = document.createElement('div');
-                projEl.className = 'projectile';
+                if (projectile.isCharged) {
+                    projEl.className = 'charged-projectile';
+                } else {
+                    projEl.className = 'projectile';
+                }
                 projEl.style.left = projectile.x + 'px';
                 projEl.style.top = projectile.y + 'px';
                 gameContainer.appendChild(projEl);
@@ -1194,6 +2131,9 @@
                 obstacleEl.className = 'obstacle';
                 obstacleEl.style.left = obstacle.x + 'px';
                 obstacleEl.style.top = obstacle.y + 'px';
+                // Visual damage indication for obstacles
+                const obstacleHealth = obstacle.health / 3;
+                obstacleEl.style.opacity = 0.4 + obstacleHealth * 0.6;
                 gameContainer.appendChild(obstacleEl);
             }
 
@@ -1201,18 +2141,98 @@
             if (gameState.boss) {
                 const bossEl = document.createElement('div');
                 bossEl.className = 'boss';
+                if (gameState.boss.isCharging) {
+                    bossEl.classList.add('boss-charging');
+                }
                 bossEl.style.left = gameState.boss.x + 'px';
                 bossEl.style.top = gameState.boss.y + 'px';
+                
+                // Boss damage effects
+                const bossHealthPercent = gameState.boss.health / gameState.boss.maxHealth;
+                if (bossHealthPercent < 0.5) {
+                    const smoke = document.createElement('div');
+                    smoke.className = 'damage-smoke';
+                    smoke.style.left = (gameState.boss.x + gameState.boss.width / 2 - 7) + 'px';
+                    smoke.style.top = (gameState.boss.y - 5) + 'px';
+                    gameContainer.appendChild(smoke);
+                }
+                if (bossHealthPercent < 0.25) {
+                    const spark = document.createElement('div');
+                    spark.className = 'damage-sparks';
+                    spark.style.left = (gameState.boss.x + Math.random() * gameState.boss.width) + 'px';
+                    spark.style.top = (gameState.boss.y + Math.random() * gameState.boss.height) + 'px';
+                    gameContainer.appendChild(spark);
+                }
+                
                 gameContainer.appendChild(bossEl);
             }
 
-            // Render enemy projectiles
+            // Render enemy projectiles (with type-based styling)
             for (let projectile of gameState.enemyProjectiles) {
                 const projEl = document.createElement('div');
-                projEl.className = 'boss-projectile';
+                if (projectile.type === 'burst') {
+                    projEl.className = 'boss-projectile enemy-projectile-burst';
+                } else if (projectile.type === 'aoe') {
+                    projEl.className = 'enemy-projectile-aoe';
+                } else {
+                    projEl.className = 'boss-projectile';
+                }
                 projEl.style.left = projectile.x + 'px';
                 projEl.style.top = projectile.y + 'px';
                 gameContainer.appendChild(projEl);
+            }
+
+            // Render power-ups
+            for (let powerUp of gameState.powerUps) {
+                const powerUpEl = document.createElement('div');
+                powerUpEl.className = `power-up power-up-${powerUp.type}`;
+                powerUpEl.style.left = powerUp.x + 'px';
+                powerUpEl.style.top = powerUp.y + 'px';
+                gameContainer.appendChild(powerUpEl);
+            }
+
+            // Render hit effects
+            for (let effect of gameState.hitEffects) {
+                const effectEl = document.createElement('div');
+                if (effect.type === 'hit') {
+                    effectEl.className = 'hit-effect';
+                } else if (effect.type === 'miss') {
+                    effectEl.className = 'miss-effect';
+                } else if (effect.type === 'aoe') {
+                    effectEl.className = 'aoe-explosion';
+                    effectEl.style.width = (effect.radius * 2) + 'px';
+                    effectEl.style.height = (effect.radius * 2) + 'px';
+                }
+                effectEl.style.left = (effect.x - 20) + 'px';
+                effectEl.style.top = (effect.y - 20) + 'px';
+                gameContainer.appendChild(effectEl);
+            }
+
+            // Update cooldown bar
+            const cooldownBar = document.getElementById('cooldownBar');
+            if (cooldownBar) {
+                const maxCooldown = gameState.rapidFireActive ? RAPID_FIRE_COOLDOWN : SHOOT_COOLDOWN;
+                const cooldownPercent = Math.max(0, (maxCooldown - gameState.shootCooldown) / maxCooldown * 100);
+                cooldownBar.style.width = cooldownPercent + '%';
+            }
+
+            // Update power-up status display
+            const powerUpStatus = document.getElementById('powerUpStatus');
+            if (powerUpStatus) {
+                let statusHTML = '';
+                if (gameState.rapidFireActive) {
+                    statusHTML += '<span class="power-up-icon" style="background: #ffff00;"></span>Rapid Fire ';
+                }
+                if (gameState.shieldActive) {
+                    statusHTML += '<span class="power-up-icon" style="background: #00ffff;"></span>Shield (' + gameState.shieldHits + ') ';
+                }
+                if (gameState.invincibilityActive) {
+                    statusHTML += '<span class="power-up-icon" style="background: #ffffff;"></span>Invincible ';
+                }
+                if (gameState.chargedShotReady) {
+                    statusHTML += '<span class="power-up-icon" style="background: #ff00ff;"></span>Charged Shot Ready ';
+                }
+                powerUpStatus.innerHTML = statusHTML;
             }
         }
 
@@ -1230,9 +2250,12 @@
 
             updatePlayer();
             updateEnemies();
+            updateEnemyAttacks(); // New: enemy attack patterns
             updateProjectiles();
             updateBoss();
             updateEnemyProjectiles();
+            updatePowerUps(); // New: power-up falling and collection
+            updateCombatMechanics(); // New: timers for abilities
             checkCollisions();
             updateUI();
             render();
