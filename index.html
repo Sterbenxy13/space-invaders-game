@@ -1084,7 +1084,7 @@
         const MAX_ENEMIES_PER_WAVE = 10;
         const SPEED_INCREASE_PER_WAVE = 0.3;
         const ENEMY_HORIZONTAL_MARGIN = 100;
-        const BOSS_ATTACK_PATTERNS = 5; // Increased for new patterns
+        const BOSS_ATTACK_PATTERNS = 5; // Total boss attack patterns including new telegraphed attacks
         const TRIPLE_SHOT_SPACING = 30;
         const BARRAGE_SHOT_SPACING = 25;
 
@@ -1106,6 +1106,8 @@
         const BURST_FIRE_COUNT = 3; // shots in a burst
         const BURST_FIRE_DELAY = 10; // frames between burst shots
         const AOE_EXPLOSION_RADIUS = 60; // radius of area damage
+        const OBSTACLE_MAX_HEALTH = 3; // maximum health for obstacles
+        const MIN_CHARGE_PERCENT = 0.5; // minimum charge percentage to fire charged shot
 
         // Game state
         let gameState = {
@@ -1148,7 +1150,6 @@
 
         // Keyboard input
         const keys = {};
-        let spaceHoldTimer = 0;
 
         window.addEventListener('keydown', (e) => {
             keys[e.key] = true;
@@ -1307,7 +1308,7 @@
                         shootChance = ENEMY_SHOOT_CHANCE_BASE * 0.5;
                         attackType = 'aoe';
                         break;
-                    default:
+                    default: // Defensive fallback - should never be reached with current ENEMY_TYPES_COUNT
                         health = 1;
                         shootChance = ENEMY_SHOOT_CHANCE_BASE;
                         attackType = 'single';
@@ -1339,7 +1340,7 @@
                         y: obstacleRow + j * 35,
                         width: OBSTACLE_SIZE,
                         height: OBSTACLE_SIZE,
-                        health: 3
+                        health: OBSTACLE_MAX_HEALTH
                     });
                 }
             }
@@ -1877,8 +1878,8 @@
 
         function stopCharging() {
             if (gameState.isCharging) {
-                // Fire if charged enough
-                if (gameState.chargeTimer >= CHARGE_TIME * 0.5) {
+                // Fire if charged enough (minimum charge percentage required)
+                if (gameState.chargeTimer >= CHARGE_TIME * MIN_CHARGE_PERCENT) {
                     shootProjectile();
                 }
                 gameState.isCharging = false;
@@ -2028,9 +2029,17 @@
             livesDisplay.textContent = `Lives: ${gameState.lives}`;
         }
 
+        // CSS selectors for all game elements that need to be cleared each frame
+        const GAME_ELEMENT_SELECTORS = [
+            '.player', '.enemy', '.projectile', '.obstacle', '.boss', '.boss-projectile',
+            '.power-up', '.hit-effect', '.miss-effect', '.aoe-explosion', '.player-shield',
+            '.charge-indicator', '.damage-sparks', '.damage-smoke', '.boss-telegraph',
+            '.charged-projectile', '.enemy-projectile-burst', '.enemy-projectile-aoe'
+        ].join(', ');
+
         function render() {
             // Clear game container
-            const existingElements = gameContainer.querySelectorAll('.player, .enemy, .projectile, .obstacle, .boss, .boss-projectile, .power-up, .hit-effect, .miss-effect, .aoe-explosion, .player-shield, .charge-indicator, .damage-sparks, .damage-smoke, .boss-telegraph, .charged-projectile, .enemy-projectile-burst, .enemy-projectile-aoe');
+            const existingElements = gameContainer.querySelectorAll(GAME_ELEMENT_SELECTORS);
             existingElements.forEach(el => el.remove());
 
             // Render boss telegraph warning
@@ -2132,7 +2141,7 @@
                 obstacleEl.style.left = obstacle.x + 'px';
                 obstacleEl.style.top = obstacle.y + 'px';
                 // Visual damage indication for obstacles
-                const obstacleHealth = obstacle.health / 3;
+                const obstacleHealth = obstacle.health / OBSTACLE_MAX_HEALTH;
                 obstacleEl.style.opacity = 0.4 + obstacleHealth * 0.6;
                 gameContainer.appendChild(obstacleEl);
             }
