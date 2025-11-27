@@ -141,6 +141,49 @@
             text-align: right;
             text-shadow: 0 0 10px #00ff00;
         }
+
+        /* Glowing stars background */
+        .star {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, #ffffff 0%, rgba(255, 255, 255, 0) 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes starGlow {
+            0%, 100% {
+                opacity: 0.3;
+                transform: scale(0.8);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+        }
+
+        /* Mute button styles */
+        #muteBtn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 8px 15px;
+            font-size: 14px;
+            background: transparent;
+            color: #00ff00;
+            border: 2px solid #00ff00;
+            cursor: pointer;
+            border-radius: 5px;
+            z-index: 100;
+            transition: all 0.3s;
+            text-shadow: 0 0 10px #00ff00;
+            box-shadow: 0 0 5px rgba(0, 255, 0, 0.3);
+        }
+
+        #muteBtn:hover {
+            background: rgba(0, 255, 0, 0.2);
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+        }
     </style>
 </head>
 <body>
@@ -149,6 +192,7 @@
             <div id="score">Score: 0</div>
             <div id="lives">Lives: 3</div>
         </div>
+        <button id="muteBtn">🔊 Sound</button>
         <div id="instructions">
             <div>← → Arrow Keys to Move</div>
             <div>SPACE to Shoot</div>
@@ -167,6 +211,152 @@
         let scoreDisplay = document.getElementById('score');
         let livesDisplay = document.getElementById('lives');
         let finalScoreDisplay = document.getElementById('finalScore');
+        let muteBtn = document.getElementById('muteBtn');
+
+        // Audio context and sound management
+        let audioContext = null;
+        let isMuted = false;
+        let bgMusicOscillator = null;
+        let bgMusicGain = null;
+        let bgMusicTimeoutId = null;
+
+        // Initialize audio context (must be triggered by user interaction)
+        function initAudio() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                startBackgroundMusic();
+            }
+        }
+
+        // Play shooting sound effect
+        function playShootSound() {
+            if (!audioContext || isMuted) return;
+            
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.type = 'square';
+            oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(200, audioContext.currentTime + 0.1);
+            
+            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+            
+            oscillator.start();
+            oscillator.stop(audioContext.currentTime + 0.1);
+        }
+
+        // Play collision sound effect
+        function playCollisionSound() {
+            if (!audioContext || isMuted) return;
+            
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.type = 'sawtooth';
+            oscillator.frequency.setValueAtTime(150, audioContext.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(50, audioContext.currentTime + 0.2);
+            
+            gainNode.gain.setValueAtTime(0.15, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+            
+            oscillator.start();
+            oscillator.stop(audioContext.currentTime + 0.2);
+        }
+
+        // Start background music
+        function startBackgroundMusic() {
+            if (!audioContext || isMuted) return;
+            
+            // Create a simple looping bass line for background music
+            bgMusicGain = audioContext.createGain();
+            bgMusicGain.connect(audioContext.destination);
+            bgMusicGain.gain.value = 0.05;
+            
+            playBackgroundNote();
+        }
+
+        // Play a repeating background note pattern
+        function playBackgroundNote() {
+            // Clear any existing timeout to prevent multiple chains
+            if (bgMusicTimeoutId) {
+                clearTimeout(bgMusicTimeoutId);
+                bgMusicTimeoutId = null;
+            }
+            
+            if (!audioContext || isMuted || gameState.gameOver) return;
+            
+            const notes = [110, 130.81, 146.83, 130.81]; // A2, C3, D3, C3
+            const noteIndex = Math.floor((Date.now() / 500) % notes.length);
+            
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.type = 'sine';
+            oscillator.frequency.value = notes[noteIndex];
+            
+            gainNode.gain.setValueAtTime(0.03, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
+            
+            oscillator.start();
+            oscillator.stop(audioContext.currentTime + 0.4);
+            
+            bgMusicTimeoutId = setTimeout(playBackgroundNote, 500);
+        }
+
+        // Toggle mute/unmute
+        function toggleMute() {
+            isMuted = !isMuted;
+            muteBtn.textContent = isMuted ? '🔇 Muted' : '🔊 Sound';
+            
+            if (!isMuted && audioContext) {
+                playBackgroundNote();
+            }
+        }
+
+        // Create animated stars background
+        function createStars() {
+            const existingStars = gameContainer.querySelectorAll('.star');
+            existingStars.forEach(star => star.remove());
+            
+            const starCount = 50;
+            
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                
+                // Random size between 2 and 6 pixels
+                const size = Math.random() * 4 + 2;
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+                
+                // Random position
+                star.style.left = Math.random() * GAME_WIDTH + 'px';
+                star.style.top = Math.random() * GAME_HEIGHT + 'px';
+                
+                // Random animation duration for variety (2-5 seconds)
+                const duration = Math.random() * 3 + 2;
+                star.style.animation = `starGlow ${duration}s ease-in-out infinite`;
+                
+                // Random animation delay for staggered effect
+                star.style.animationDelay = Math.random() * duration + 's';
+                
+                // Random base opacity for natural variation
+                const baseOpacity = Math.random() * 0.5 + 0.3;
+                star.style.opacity = baseOpacity;
+                
+                gameContainer.appendChild(star);
+            }
+        }
 
         // Game constants
         const GAME_WIDTH = 800;
@@ -202,6 +392,7 @@
         const keys = {};
         window.addEventListener('keydown', (e) => {
             keys[e.key] = true;
+            initAudio(); // Initialize audio on first user interaction
             if (e.key === ' ') {
                 e.preventDefault();
                 shootProjectile();
@@ -237,6 +428,7 @@
                     <div id="score">Score: 0</div>
                     <div id="lives">Lives: 3</div>
                 </div>
+                <button id="muteBtn">${isMuted ? '🔇 Muted' : '🔊 Sound'}</button>
                 <div id="instructions">
                     <div>← → Arrow Keys to Move</div>
                     <div>SPACE to Shoot</div>
@@ -253,10 +445,22 @@
             finalScoreDisplay = document.getElementById('finalScore');
             gameOverScreen = document.getElementById('gameOverScreen');
             restartBtn = document.getElementById('restartBtn');
+            muteBtn = document.getElementById('muteBtn');
             restartBtn.addEventListener('click', initGame);
+            muteBtn.addEventListener('click', () => {
+                initAudio();
+                toggleMute();
+            });
 
+            createStars();
             createEnemies();
             createObstacles();
+            
+            // Restart background music if audio is initialized and not muted
+            if (audioContext && !isMuted) {
+                playBackgroundNote();
+            }
+            
             gameLoop();
         }
 
@@ -289,6 +493,7 @@
 
         function shootProjectile() {
             if (!gameState.gameOver) {
+                playShootSound();
                 gameState.projectiles.push({
                     x: gameState.player.x + gameState.player.width / 2 - 2.5,
                     y: gameState.player.y,
@@ -349,6 +554,7 @@
                         gameState.projectiles.splice(i, 1);
                         gameState.enemies.splice(j, 1);
                         gameState.score += 100;
+                        playCollisionSound();
                         break;
                     }
                 }
@@ -360,6 +566,7 @@
                     if (isColliding(gameState.projectiles[i], gameState.obstacles[j])) {
                         gameState.projectiles.splice(i, 1);
                         gameState.obstacles[j].health--;
+                        playCollisionSound();
                         if (gameState.obstacles[j].health <= 0) {
                             gameState.obstacles.splice(j, 1);
                         }
