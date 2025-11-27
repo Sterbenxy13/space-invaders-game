@@ -494,6 +494,15 @@
         const PROJECTILE_SPEED = 8;
         const OBSTACLE_SIZE = 30;
 
+        // Wave system constants
+        const WAVE_BASE_ENEMIES = 5;
+        const MAX_ENEMIES_PER_WAVE = 10;
+        const SPEED_INCREASE_PER_WAVE = 0.3;
+        const ENEMY_HORIZONTAL_MARGIN = 100;
+        const BOSS_ATTACK_PATTERNS = 3;
+        const TRIPLE_SHOT_SPACING = 30;
+        const BARRAGE_SHOT_SPACING = 25;
+
         // Game state
         let gameState = {
             player: {
@@ -618,13 +627,13 @@
 
         function createEnemies() {
             const wave = gameState.currentWave;
-            // Increase enemy count with each wave (5 + wave number)
-            const enemyCount = Math.min(5 + wave, 10);
+            // Increase enemy count with each wave (base + wave number)
+            const enemyCount = Math.min(WAVE_BASE_ENEMIES + wave, MAX_ENEMIES_PER_WAVE);
             // Increase speed with each wave
-            const speedMultiplier = 1 + (wave - 1) * 0.3;
+            const speedMultiplier = 1 + (wave - 1) * SPEED_INCREASE_PER_WAVE;
             
             // Calculate spacing based on enemy count
-            const spacing = (GAME_WIDTH - 100) / enemyCount;
+            const spacing = (GAME_WIDTH - ENEMY_HORIZONTAL_MARGIN) / enemyCount;
             
             for (let i = 0; i < enemyCount; i++) {
                 gameState.enemies.push({
@@ -717,7 +726,7 @@
             boss.shootCooldown--;
             if (boss.shootCooldown <= 0) {
                 // Choose attack pattern
-                boss.attackPattern = (boss.attackPattern + 1) % 3;
+                boss.attackPattern = (boss.attackPattern + 1) % BOSS_ATTACK_PATTERNS;
                 
                 if (boss.attackPattern === 0) {
                     // Single shot aimed at player
@@ -733,7 +742,7 @@
                     // Triple shot spread
                     for (let i = -1; i <= 1; i++) {
                         gameState.enemyProjectiles.push({
-                            x: boss.x + boss.width / 2 - 4 + i * 30,
+                            x: boss.x + boss.width / 2 - 4 + i * TRIPLE_SHOT_SPACING,
                             y: boss.y + boss.height,
                             width: 8,
                             height: 20,
@@ -745,7 +754,7 @@
                     // Five shot barrage
                     for (let i = -2; i <= 2; i++) {
                         gameState.enemyProjectiles.push({
-                            x: boss.x + boss.width / 2 - 4 + i * 25,
+                            x: boss.x + boss.width / 2 - 4 + i * BARRAGE_SHOT_SPACING,
                             y: boss.y + boss.height,
                             width: 8,
                             height: 20,
