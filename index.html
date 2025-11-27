@@ -359,6 +359,114 @@
             box-shadow: 0 0 20px #00ff00;
         }
 
+        #waveInfo {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #00ff00;
+            font-size: 18px;
+            z-index: 100;
+            text-shadow: 0 0 10px #00ff00;
+        }
+
+        #waveTransition {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 150;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        #waveTransition.show {
+            display: flex;
+        }
+
+        #waveTransitionText {
+            color: #00ff00;
+            font-size: 36px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px #00ff00;
+            animation: pulse 1s ease-in-out infinite;
+        }
+
+        #waveTransitionSubtext {
+            color: #00ff00;
+            font-size: 24px;
+            text-shadow: 0 0 10px #00ff00;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .boss {
+            position: absolute;
+            width: 120px;
+            height: 80px;
+            background: linear-gradient(to bottom, #ff00ff, #8800ff);
+            clip-path: polygon(10% 0%, 90% 0%, 100% 30%, 85% 50%, 100% 70%, 90% 100%, 10% 100%, 0% 70%, 15% 50%, 0% 30%);
+            border: 3px solid #ff00ff;
+            box-shadow: 0 0 20px #ff00ff, 0 0 40px #8800ff;
+        }
+
+        .boss-projectile {
+            position: absolute;
+            width: 8px;
+            height: 20px;
+            background: #ff00ff;
+            box-shadow: 0 0 10px #ff00ff;
+        }
+
+        #bossHealthContainer {
+            display: none;
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 20px;
+            background: #333;
+            border: 2px solid #ff00ff;
+            border-radius: 10px;
+            overflow: hidden;
+            z-index: 100;
+        }
+
+        #bossHealthContainer.show {
+            display: block;
+        }
+
+        #bossHealthBar {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, #ff00ff, #8800ff);
+            transition: width 0.3s;
+        }
+
+        #bossLabel {
+            display: none;
+            position: absolute;
+            top: 75px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #ff00ff;
+            font-size: 14px;
+            text-shadow: 0 0 10px #ff00ff;
+            z-index: 100;
+        }
+
+        #bossLabel.show {
+            display: block;
+        }
+
         #instructions {
             position: absolute;
             bottom: 10px;
@@ -419,7 +527,16 @@
             <div id="score">Score: 0</div>
             <div id="lives">Lives: 3</div>
         </div>
+        <div id="waveInfo">Wave: 1</div>
+        <div id="bossHealthContainer">
+            <div id="bossHealthBar"></div>
+        </div>
+        <div id="bossLabel">BOSS</div>
         <button id="muteBtn">🔊 Sound</button>
+        <div id="waveTransition">
+            <div id="waveTransitionText">Wave 1 Complete!</div>
+            <div id="waveTransitionSubtext">Get Ready for Wave 2</div>
+        </div>
         <div id="instructions">
             <div>← → Arrow Keys to Move</div>
             <div>SPACE to Shoot</div>
@@ -439,6 +556,13 @@
         let livesDisplay = document.getElementById('lives');
         let finalScoreDisplay = document.getElementById('finalScore');
         let muteBtn = document.getElementById('muteBtn');
+        let waveInfoDisplay = document.getElementById('waveInfo');
+        let waveTransition = document.getElementById('waveTransition');
+        let waveTransitionText = document.getElementById('waveTransitionText');
+        let waveTransitionSubtext = document.getElementById('waveTransitionSubtext');
+        let bossHealthContainer = document.getElementById('bossHealthContainer');
+        let bossHealthBar = document.getElementById('bossHealthBar');
+        let bossLabel = document.getElementById('bossLabel');
 
         // Audio context and sound management
         let audioContext = null;
@@ -598,6 +722,15 @@
         const PROJECTILE_SPEED = 8;
         const OBSTACLE_SIZE = 30;
 
+        // Wave system constants
+        const WAVE_BASE_ENEMIES = 5;
+        const MAX_ENEMIES_PER_WAVE = 10;
+        const SPEED_INCREASE_PER_WAVE = 0.3;
+        const ENEMY_HORIZONTAL_MARGIN = 100;
+        const BOSS_ATTACK_PATTERNS = 3;
+        const TRIPLE_SHOT_SPACING = 30;
+        const BARRAGE_SHOT_SPACING = 25;
+
         // Game state
         let gameState = {
             player: {
@@ -609,11 +742,17 @@
             },
             enemies: [],
             projectiles: [],
+            enemyProjectiles: [],
             obstacles: [],
             score: 0,
             lives: 3,
             gameOver: false,
-            enemyDirection: 1
+            enemyDirection: 1,
+            currentWave: 1,
+            maxWaves: 5,
+            inWaveTransition: false,
+            boss: null,
+            bossPhase: false
         };
 
         // Keyboard input
@@ -643,11 +782,17 @@
                 },
                 enemies: [],
                 projectiles: [],
+                enemyProjectiles: [],
                 obstacles: [],
                 score: 0,
                 lives: 3,
                 gameOver: false,
-                enemyDirection: 1
+                enemyDirection: 1,
+                currentWave: 1,
+                maxWaves: 5,
+                inWaveTransition: false,
+                boss: null,
+                bossPhase: false
             };
 
             gameOverScreen.classList.remove('show');
@@ -656,7 +801,16 @@
                     <div id="score">Score: 0</div>
                     <div id="lives">Lives: 3</div>
                 </div>
+                <div id="waveInfo">Wave: 1</div>
+                <div id="bossHealthContainer">
+                    <div id="bossHealthBar"></div>
+                </div>
+                <div id="bossLabel">BOSS</div>
                 <button id="muteBtn">${isMuted ? '🔇 Muted' : '🔊 Sound'}</button>
+                <div id="waveTransition">
+                    <div id="waveTransitionText">Wave 1 Complete!</div>
+                    <div id="waveTransitionSubtext">Get Ready for Wave 2</div>
+                </div>
                 <div id="instructions">
                     <div>← → Arrow Keys to Move</div>
                     <div>SPACE to Shoot</div>
@@ -674,6 +828,13 @@
             gameOverScreen = document.getElementById('gameOverScreen');
             restartBtn = document.getElementById('restartBtn');
             muteBtn = document.getElementById('muteBtn');
+            waveInfoDisplay = document.getElementById('waveInfo');
+            waveTransition = document.getElementById('waveTransition');
+            waveTransitionText = document.getElementById('waveTransitionText');
+            waveTransitionSubtext = document.getElementById('waveTransitionSubtext');
+            bossHealthContainer = document.getElementById('bossHealthContainer');
+            bossHealthBar = document.getElementById('bossHealthBar');
+            bossLabel = document.getElementById('bossLabel');
             restartBtn.addEventListener('click', initGame);
             muteBtn.addEventListener('click', () => {
                 initAudio();
@@ -693,16 +854,22 @@
         }
 
         function createEnemies() {
-            for (let i = 0; i < 5; i++) {
-                // Assign enemy types for visual variety
-                const enemyType = (i % ENEMY_TYPES_COUNT) + 1;
+            const wave = gameState.currentWave;
+            // Increase enemy count with each wave (base + wave number)
+            const enemyCount = Math.min(WAVE_BASE_ENEMIES + wave, MAX_ENEMIES_PER_WAVE);
+            // Increase speed with each wave
+            const speedMultiplier = 1 + (wave - 1) * SPEED_INCREASE_PER_WAVE;
+            
+            // Calculate spacing based on enemy count
+            const spacing = (GAME_WIDTH - ENEMY_HORIZONTAL_MARGIN) / enemyCount;
+            
+            for (let i = 0; i < enemyCount; i++) {
                 gameState.enemies.push({
-                    x: 80 + i * 130,
+                    x: 50 + i * spacing,
                     y: 40,
                     width: ENEMY_WIDTH,
                     height: ENEMY_HEIGHT,
-                    speed: ENEMY_SPEED,
-                    type: enemyType
+                    speed: ENEMY_SPEED * speedMultiplier
                 });
             }
         }
@@ -718,6 +885,149 @@
                         height: OBSTACLE_SIZE,
                         health: 3
                     });
+                }
+            }
+        }
+
+        function createBoss() {
+            gameState.boss = {
+                x: GAME_WIDTH / 2 - 60,
+                y: 60,
+                width: 120,
+                height: 80,
+                speed: 3,
+                maxHealth: 50,
+                health: 50,
+                direction: 1,
+                shootCooldown: 0,
+                attackPattern: 0
+            };
+            gameState.bossPhase = true;
+            bossHealthContainer.classList.add('show');
+            bossLabel.classList.add('show');
+        }
+
+        function startWaveTransition() {
+            gameState.inWaveTransition = true;
+            
+            if (gameState.currentWave >= gameState.maxWaves) {
+                // Transition to boss phase
+                waveTransitionText.textContent = 'All Waves Complete!';
+                waveTransitionSubtext.textContent = 'BOSS INCOMING!';
+            } else {
+                waveTransitionText.textContent = `Wave ${gameState.currentWave} Complete!`;
+                waveTransitionSubtext.textContent = `Get Ready for Wave ${gameState.currentWave + 1}`;
+            }
+            
+            waveTransition.classList.add('show');
+            
+            setTimeout(() => {
+                waveTransition.classList.remove('show');
+                gameState.inWaveTransition = false;
+                
+                if (gameState.currentWave >= gameState.maxWaves) {
+                    // Start boss phase
+                    createBoss();
+                    waveInfoDisplay.textContent = 'BOSS BATTLE!';
+                } else {
+                    // Start next wave
+                    gameState.currentWave++;
+                    waveInfoDisplay.textContent = `Wave: ${gameState.currentWave}`;
+                    createEnemies();
+                }
+            }, 2000);
+        }
+
+        function updateBoss() {
+            if (!gameState.boss) return;
+            
+            const boss = gameState.boss;
+            
+            // Move boss left and right
+            boss.x += boss.speed * boss.direction;
+            
+            if (boss.x <= 50 || boss.x + boss.width >= GAME_WIDTH - 50) {
+                boss.direction *= -1;
+            }
+            
+            // Boss shooting with cooldown
+            boss.shootCooldown--;
+            if (boss.shootCooldown <= 0) {
+                // Choose attack pattern
+                boss.attackPattern = (boss.attackPattern + 1) % BOSS_ATTACK_PATTERNS;
+                
+                if (boss.attackPattern === 0) {
+                    // Single shot aimed at player
+                    gameState.enemyProjectiles.push({
+                        x: boss.x + boss.width / 2 - 4,
+                        y: boss.y + boss.height,
+                        width: 8,
+                        height: 20,
+                        speed: 5
+                    });
+                    boss.shootCooldown = 60;
+                } else if (boss.attackPattern === 1) {
+                    // Triple shot spread
+                    for (let i = -1; i <= 1; i++) {
+                        gameState.enemyProjectiles.push({
+                            x: boss.x + boss.width / 2 - 4 + i * TRIPLE_SHOT_SPACING,
+                            y: boss.y + boss.height,
+                            width: 8,
+                            height: 20,
+                            speed: 4
+                        });
+                    }
+                    boss.shootCooldown = 90;
+                } else {
+                    // Five shot barrage
+                    for (let i = -2; i <= 2; i++) {
+                        gameState.enemyProjectiles.push({
+                            x: boss.x + boss.width / 2 - 4 + i * BARRAGE_SHOT_SPACING,
+                            y: boss.y + boss.height,
+                            width: 8,
+                            height: 20,
+                            speed: 3
+                        });
+                    }
+                    boss.shootCooldown = 120;
+                }
+            }
+            
+            // Update boss health bar
+            const healthPercent = (boss.health / boss.maxHealth) * 100;
+            bossHealthBar.style.width = healthPercent + '%';
+        }
+
+        function updateEnemyProjectiles() {
+            gameState.enemyProjectiles = gameState.enemyProjectiles.filter(proj => {
+                proj.y += proj.speed;
+                return proj.y < GAME_HEIGHT;
+            });
+            
+            // Check collision with player
+            for (let i = gameState.enemyProjectiles.length - 1; i >= 0; i--) {
+                if (isColliding(gameState.enemyProjectiles[i], gameState.player)) {
+                    gameState.enemyProjectiles.splice(i, 1);
+                    gameState.lives--;
+                    playCollisionSound();
+                    
+                    if (gameState.lives <= 0) {
+                        gameState.gameOver = true;
+                    }
+                }
+            }
+            
+            // Check collision with obstacles
+            for (let i = gameState.enemyProjectiles.length - 1; i >= 0; i--) {
+                for (let j = gameState.obstacles.length - 1; j >= 0; j--) {
+                    if (isColliding(gameState.enemyProjectiles[i], gameState.obstacles[j])) {
+                        gameState.enemyProjectiles.splice(i, 1);
+                        gameState.obstacles[j].health--;
+                        if (gameState.obstacles[j].health <= 0) {
+                            gameState.obstacles.splice(j, 1);
+                        }
+                        break;
+                    }
                 }
             }
         }
@@ -806,10 +1116,33 @@
                 }
             }
 
-            // Check if all enemies destroyed
-            if (gameState.enemies.length === 0) {
-                gameState.gameOver = true;
-                document.getElementById('gameOverText').textContent = 'YOU WIN!';
+            // Check projectile vs boss
+            if (gameState.boss) {
+                for (let i = gameState.projectiles.length - 1; i >= 0; i--) {
+                    if (isColliding(gameState.projectiles[i], gameState.boss)) {
+                        gameState.projectiles.splice(i, 1);
+                        gameState.boss.health--;
+                        gameState.score += 10;
+                        playCollisionSound();
+                        
+                        if (gameState.boss.health <= 0) {
+                            gameState.score += 1000; // Bonus for defeating boss
+                            gameState.boss = null;
+                            gameState.bossPhase = false;
+                            gameState.enemyProjectiles = [];
+                            bossHealthContainer.classList.remove('show');
+                            bossLabel.classList.remove('show');
+                            gameState.gameOver = true;
+                            document.getElementById('gameOverText').textContent = 'YOU WIN!';
+                        }
+                        break;
+                    }
+                }
+            }
+
+            // Check if all enemies destroyed (wave complete)
+            if (gameState.enemies.length === 0 && !gameState.inWaveTransition && !gameState.bossPhase) {
+                startWaveTransition();
             }
         }
 
@@ -827,7 +1160,7 @@
 
         function render() {
             // Clear game container
-            const existingElements = gameContainer.querySelectorAll('.player, .enemy, .projectile, .obstacle');
+            const existingElements = gameContainer.querySelectorAll('.player, .enemy, .projectile, .obstacle, .boss, .boss-projectile');
             existingElements.forEach(el => el.remove());
 
             // Render player
@@ -863,6 +1196,24 @@
                 obstacleEl.style.top = obstacle.y + 'px';
                 gameContainer.appendChild(obstacleEl);
             }
+
+            // Render boss
+            if (gameState.boss) {
+                const bossEl = document.createElement('div');
+                bossEl.className = 'boss';
+                bossEl.style.left = gameState.boss.x + 'px';
+                bossEl.style.top = gameState.boss.y + 'px';
+                gameContainer.appendChild(bossEl);
+            }
+
+            // Render enemy projectiles
+            for (let projectile of gameState.enemyProjectiles) {
+                const projEl = document.createElement('div');
+                projEl.className = 'boss-projectile';
+                projEl.style.left = projectile.x + 'px';
+                projEl.style.top = projectile.y + 'px';
+                gameContainer.appendChild(projEl);
+            }
         }
 
         function gameLoop() {
@@ -872,9 +1223,16 @@
                 return;
             }
 
+            if (gameState.inWaveTransition) {
+                requestAnimationFrame(gameLoop);
+                return;
+            }
+
             updatePlayer();
             updateEnemies();
             updateProjectiles();
+            updateBoss();
+            updateEnemyProjectiles();
             checkCollisions();
             updateUI();
             render();
